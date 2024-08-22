@@ -1,0 +1,190 @@
+/*=================================================================================
+Study Center....: Universidad Técnica Nacional
+Campus..........: Pacífico (JRMP)
+College career..: Ingeniería en Tecnologías de Información
+Period..........: 2C-2024
+Course..........: ITI-221 - Programación I
+Document........: Practica 5_Pro4
+Goals...........: Use functions from the external library to generate random data
+                  and print it in a table format.
+Professor.......: Jorge Ruiz (york)
+Student.........: Jose Quesada Gonzalez
+=================================================================================*/
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Electrodomestico {
+    protected String marca;
+    protected String modelo;
+    protected double precioBase;
+    protected String color;
+    protected char consumoEnergetico;
+    protected int peso;
+
+    public Electrodomestico(String marca, String modelo, double precioBase, String color, char consumoEnergetico, int peso) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.precioBase = precioBase;
+        this.color = color;
+        this.consumoEnergetico = consumoEnergetico >= 'A' && consumoEnergetico <= 'F' ? consumoEnergetico : 'F';
+        this.peso = peso >= 1 && peso <= 125 ? peso : 1;
+    }
+
+    public double calcularPrecioFinal() {
+        double precio = precioBase;
+        switch (consumoEnergetico) {
+            case 'A': precio += 61500; break;
+            case 'B': precio += 49200; break;
+            case 'C': precio += 36900; break;
+            case 'D': precio += 30750; break;
+            case 'E': precio += 18450; break;
+            case 'F': precio += 6150; break;
+        }
+        if (peso <= 19) precio += 6150;
+        else if (peso <= 49) precio += 30750;
+        else if (peso <= 79) precio += 49200;
+        else precio += 61500;
+        return precio;
+    }
+
+    public String toString() {
+        return "Marca: " + marca + ", Modelo: " + modelo + ", Precio Final: " + calcularPrecioFinal() +
+                ", Color: " + color + ", Consumo Energético: " + consumoEnergetico + ", Peso: " + peso + "kg";
+    }
+}
+
+class Televisor extends Electrodomestico {
+    private String resolucion;
+    private String aspecto;
+    private int tamanoPantalla;
+
+    public Televisor(String marca, String modelo, double precioBase, String color, char consumoEnergetico, int peso,
+                     String resolucion, String aspecto, int tamanoPantalla) {
+        super(marca, modelo, precioBase, color, consumoEnergetico, peso);
+        this.resolucion = resolucion.equals("1080p") || resolucion.equals("1440p") ? resolucion : "720p";
+        this.aspecto = aspecto.equals("16:10") || aspecto.equals("21:9") ? aspecto : "16:9";
+        this.tamanoPantalla = tamanoPantalla >= 21 && tamanoPantalla <= 100 ? tamanoPantalla : 21;
+    }
+
+    public String toString() {
+        return super.toString() + ", Resolución: " + resolucion + ", Aspecto: " + aspecto + ", Tamaño: " + tamanoPantalla + "\"";
+    }
+}
+
+class Refrigeradora extends Electrodomestico {
+    private int cantidadPuertas;
+    private int diseno;
+    private int capacidad;
+    private String ubicacionFreezer;
+
+    public Refrigeradora(String marca, String modelo, double precioBase, String color, char consumoEnergetico, int peso,
+                         int cantidadPuertas, int diseno, int capacidad, String ubicacionFreezer) {
+        super(marca, modelo, precioBase, color, consumoEnergetico, peso);
+        this.cantidadPuertas = cantidadPuertas > 0 ? cantidadPuertas : 1;
+        this.diseno = diseno >= 20 && diseno <= 33 ? diseno : 20;
+        this.capacidad = capacidad >= 18 && capacidad <= 30 ? capacidad : 18;
+        this.ubicacionFreezer = ubicacionFreezer.equalsIgnoreCase("inferior") ? "inferior" : "superior";
+    }
+
+    public String toString() {
+        return super.toString() + ", Puertas: " + cantidadPuertas + ", Diseño: " + diseno + "\", Capacidad: " + capacidad + "', Freezer: " + ubicacionFreezer;
+    }
+}
+
+public class SistemaElectrodomesticos {
+    private static ArrayList<Televisor> televisores = new ArrayList<>();
+    private static ArrayList<Refrigeradora> refrigeradoras = new ArrayList<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        // Precargar datos
+        televisores.add(new Televisor("Samsung", "TV1", 300000, "Negro", 'A', 15, "1080p", "16:9", 55));
+        televisores.add(new Televisor("LG", "TV2", 250000, "Gris", 'B', 10, "720p", "16:9", 43));
+        refrigeradoras.add(new Refrigeradora("Whirlpool", "R1", 400000, "Blanco", 'A', 80, 2, 25, 20, "superior"));
+        refrigeradoras.add(new Refrigeradora("Mabe", "R2", 350000, "Plateado", 'C', 70, 1, 22, 18, "inferior"));
+
+        int opcion;
+        do {
+            mostrarMenu();
+            opcion = scanner.nextInt();
+            scanner.nextLine(); // Consumir el salto de línea
+
+            switch (opcion) {
+                case 1:
+                    mostrarArticulos();
+                    break;
+                case 2:
+                    registrarArticulo();
+                    break;
+                case 3:
+                    System.out.println("Saliendo del programa...");
+                    break;
+                default:
+                    System.out.println("Opción no válida. Intente de nuevo.");
+            }
+        } while (opcion != 3);
+    }
+
+    private static void mostrarMenu() {
+        System.out.println("\n--- Menú ---");
+        System.out.println("1. Mostrar artículos registrados");
+        System.out.println("2. Registrar nuevo artículo");
+        System.out.println("3. Salir");
+        System.out.print("Seleccione una opción: ");
+    }
+
+    private static void mostrarArticulos() {
+        System.out.println("\nTelevisores:");
+        for (Televisor tv : televisores) {
+            System.out.println(tv);
+        }
+        System.out.println("\nRefrigeradoras:");
+        for (Refrigeradora ref : refrigeradoras) {
+            System.out.println(ref);
+        }
+    }
+
+    private static void registrarArticulo() {
+        System.out.print("¿Qué desea registrar? (1: Televisor, 2: Refrigeradora): ");
+        int tipo = scanner.nextInt();
+        scanner.nextLine(); // Consumir el salto de línea
+
+        System.out.print("Marca: ");
+        String marca = scanner.nextLine();
+        System.out.print("Modelo: ");
+        String modelo = scanner.nextLine();
+        System.out.print("Precio base: ");
+        double precioBase = scanner.nextDouble();
+        scanner.nextLine(); // Consumir el salto de línea
+        System.out.print("Color: ");
+        String color = scanner.nextLine();
+        System.out.print("Consumo energético (A-F): ");
+        char consumoEnergetico = scanner.nextLine().charAt(0);
+        System.out.print("Peso (kg): ");
+        int peso = scanner.nextInt();
+        scanner.nextLine(); // Consumir el salto de línea
+
+        if (tipo == 1) {
+            System.out.print("Resolución (720p, 1080p, 1440p): ");
+            String resolucion = scanner.nextLine();
+            System.out.print("Aspecto (16:9, 16:10, 21:9): ");
+            String aspecto = scanner.nextLine();
+            System.out.print("Tamaño de pantalla (pulgadas): ");
+            int tamanoPantalla = scanner.nextInt();
+            televisores.add(new Televisor(marca, modelo, precioBase, color, consumoEnergetico, peso, resolucion, aspecto, tamanoPantalla));
+        } else if (tipo == 2) {
+            System.out.print("Cantidad de puertas: ");
+            int cantidadPuertas = scanner.nextInt();
+            System.out.print("Diseño (pulgadas): ");
+            int diseno = scanner.nextInt();
+            System.out.print("Capacidad (pies cúbicos): ");
+            int capacidad = scanner.nextInt();
+            scanner.nextLine(); // Consumir el salto de línea
+            System.out.print("Ubicación del freezer (superior/inferior): ");
+            String ubicacionFreezer = scanner.nextLine();
+            refrigeradoras.add(new Refrigeradora(marca, modelo, precioBase, color, consumoEnergetico, peso, cantidadPuertas, diseno, capacidad, ubicacionFreezer));
+        }
+
+        System.out.println("Artículo registrado con éxito.");
+    }
+}
