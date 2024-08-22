@@ -1,0 +1,198 @@
+/*=================================================================================
+Study Center....: Universidad Técnica Nacional
+Campus..........: Pacífico (JRMP)
+College career..: Ingeniería en Tecnologías de Información
+Period..........: 2C-2024
+Course..........: ITI-221 - Programación I
+Document........: Practica 5_Pro5
+Goals...........: Use functions from the external library to generate random data
+                  and print it in a table format.
+Professor.......: Jorge Ruiz (york)
+Student.........: Jose Quesada Gonzalez
+=================================================================================*/
+import java.util.*;
+
+class Autor {
+    private String nombre;
+    private String nacionalidad;
+
+    public Autor(String nombre, String nacionalidad) {
+        this.nombre = nombre;
+        this.nacionalidad = nacionalidad;
+    }
+
+    public String toString() {
+        return nombre + " (" + nacionalidad + ")";
+    }
+}
+
+class Editorial {
+    private String nombre;
+    private String ubicacion;
+    private String website;
+
+    public Editorial(String nombre, String ubicacion, String website) {
+        this.nombre = nombre;
+        this.ubicacion = ubicacion;
+        this.website = website;
+    }
+
+    public String toString() {
+        return nombre + ", " + ubicacion + " - " + website;
+    }
+}
+
+class Libro {
+    private String titulo;
+    private List<Autor> autores;
+    private Editorial editorial;
+    private String fechaPublicacion;
+    private String descripcion;
+
+    public Libro(String titulo, List<Autor> autores, Editorial editorial, String fechaPublicacion, String descripcion) {
+        this.titulo = titulo;
+        this.autores = autores;
+        this.editorial = editorial;
+        this.fechaPublicacion = fechaPublicacion;
+        this.descripcion = descripcion;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String toString() {
+        return "Título: " + titulo + "\nAutores: " + autores + "\nEditorial: " + editorial +
+                "\nFecha de publicación: " + fechaPublicacion + "\nDescripción: " + descripcion;
+    }
+}
+
+class Anotacion {
+    private String contenido;
+    private Date fecha;
+
+    public Anotacion(String contenido) {
+        this.contenido = contenido;
+        this.fecha = new Date();
+    }
+
+    public String toString() {
+        return "[" + fecha + "] " + contenido;
+    }
+}
+
+class LibroUsuario {
+    private Libro libro;
+    private int nivelAvance;
+    private List<Anotacion> anotaciones;
+
+    public LibroUsuario(Libro libro) {
+        this.libro = libro;
+        this.nivelAvance = 0;
+        this.anotaciones = new ArrayList<>();
+    }
+
+    public void actualizarAvance(int porcentaje) {
+        this.nivelAvance = porcentaje;
+    }
+
+    public void agregarAnotacion(String contenido) {
+        anotaciones.add(new Anotacion(contenido));
+    }
+
+    public List<Anotacion> getAnotaciones() {
+        return anotaciones;
+    }
+
+    public String toString() {
+        return libro.getTitulo() + " - Avance: " + nivelAvance + "%";
+    }
+}
+
+class Usuario {
+    private String identificacion;
+    private String nombreCompleto;
+    private String tipo;
+    private Map<String, List<LibroUsuario>> bibliotecaPersonal;
+
+    public Usuario(String identificacion, String nombreCompleto, String tipo) {
+        this.identificacion = identificacion;
+        this.nombreCompleto = nombreCompleto;
+        this.tipo = tipo;
+        this.bibliotecaPersonal = new HashMap<>();
+    }
+
+    public void agregarLibroATema(Libro libro, String tema) {
+        LibroUsuario libroUsuario = new LibroUsuario(libro);
+        bibliotecaPersonal.computeIfAbsent(tema, k -> new ArrayList<>()).add(libroUsuario);
+    }
+
+    public void mostrarBibliotecaPersonal() {
+        System.out.println("Biblioteca personal de " + nombreCompleto + ":");
+        for (Map.Entry<String, List<LibroUsuario>> entry : bibliotecaPersonal.entrySet()) {
+            System.out.println("Tema: " + entry.getKey());
+            for (LibroUsuario libro : entry.getValue()) {
+                System.out.println("  " + libro);
+            }
+        }
+    }
+
+    public void agregarAnotacion(String tema, int indiceLibro, String contenido) {
+        if (bibliotecaPersonal.containsKey(tema) && indiceLibro < bibliotecaPersonal.get(tema).size()) {
+            bibliotecaPersonal.get(tema).get(indiceLibro).agregarAnotacion(contenido);
+        }
+    }
+
+    public void mostrarAnotaciones(String tema, int indiceLibro) {
+        if (bibliotecaPersonal.containsKey(tema) && indiceLibro < bibliotecaPersonal.get(tema).size()) {
+            System.out.println("Anotaciones para " + bibliotecaPersonal.get(tema).get(indiceLibro));
+            for (Anotacion anotacion : bibliotecaPersonal.get(tema).get(indiceLibro).getAnotaciones()) {
+                System.out.println("  " + anotacion);
+            }
+        }
+    }
+}
+
+public class BibliotecaDigital {
+    public static void main(String[] args) {
+        // Crear autores
+        Autor autor1 = new Autor("Gabriel García Márquez", "Colombiano");
+        Autor autor2 = new Autor("Isabel Allende", "Chilena");
+        Autor autor3 = new Autor("Jorge Luis Borges", "Argentino");
+
+        // Crear editoriales
+        Editorial editorial1 = new Editorial("Penguin Random House", "Nueva York, NY, USA", "www.penguinrandomhouse.com");
+        Editorial editorial2 = new Editorial("Alfaguara", "Madrid, España", "www.megustaleer.com/editoriales/alfaguara/AL");
+
+        // Crear libros
+        List<Libro> libros = Arrays.asList(
+                new Libro("Cien años de soledad", Arrays.asList(autor1), editorial1, "05/1967", "Una saga familiar en Macondo"),
+                new Libro("La casa de los espíritus", Arrays.asList(autor2), editorial2, "01/1982", "Historia de la familia Trueba"),
+                new Libro("El Aleph", Arrays.asList(autor3), editorial1, "06/1949", "Colección de cuentos"),
+                new Libro("Crónica de una muerte anunciada", Arrays.asList(autor1), editorial1, "04/1981", "Novela sobre un asesinato anunciado"),
+                new Libro("Paula", Arrays.asList(autor2), editorial2, "10/1994", "Memoria autobiográfica")
+        );
+
+        // Crear usuarios
+        Usuario usuario1 = new Usuario("U001", "Juan Pérez", "estudiante");
+        Usuario usuario2 = new Usuario("U002", "María López", "profesor");
+
+        // Demostrar funcionalidades
+        usuario1.agregarLibroATema(libros.get(0), "Literatura Latinoamericana");
+        usuario1.agregarLibroATema(libros.get(1), "Literatura Latinoamericana");
+        usuario1.agregarLibroATema(libros.get(2), "Cuentos");
+
+        usuario2.agregarLibroATema(libros.get(3), "Novelas");
+        usuario2.agregarLibroATema(libros.get(4), "Biografías");
+
+        usuario1.mostrarBibliotecaPersonal();
+        usuario2.mostrarBibliotecaPersonal();
+
+        usuario1.agregarAnotacion("Literatura Latinoamericana", 0, "Impresionante uso del realismo mágico");
+        usuario1.agregarAnotacion("Literatura Latinoamericana", 0, "Los nombres de los personajes son confusos");
+        usuario1.mostrarAnotaciones("Literatura Latinoamericana", 0);
+
+        usuario2.agregarAnotacion("Novelas", 0, "Estructura narrativa interesante");
+        usuario2.mostrarAnotaciones("Novelas", 0);
+    }
+}
