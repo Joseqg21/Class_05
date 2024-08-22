@@ -1,0 +1,493 @@
+/*=================================================================================
+Study Center....: Universidad Técnica Nacional
+Campus..........: Pacífico (JRMP)
+College career..: Ingeniería en Tecnologías de Información
+Period..........: 2C-2024
+Course..........: ITI-221 - Programación I
+Document........: Practica 5_Pro6_Main
+Goals...........: Use functions from the external library to generate random data
+                  and print it in a table format.
+Professor.......: Jorge Ruiz (york)
+Student.........: Jose Quesada Gonzalez
+=================================================================================*/
+import java.util.*;
+
+class Persona {
+    protected String identificacion;
+    protected String nombre;
+    protected String contacto;
+
+    public Persona() {}
+
+    public Persona(String identificacion, String nombre) {
+        this.identificacion = identificacion;
+        this.nombre = nombre;
+    }
+
+    public Persona(String identificacion, String nombre, String contacto) {
+        this.identificacion = identificacion;
+        this.nombre = nombre;
+        this.contacto = contacto;
+    }
+
+    // Getters y setters
+
+    public String getIdentificacion() {
+        return identificacion;
+    }
+
+    public void setIdentificacion(String identificacion) {
+        this.identificacion = identificacion;
+    }
+}
+
+class Chofer extends Persona {
+    private List<Licencia> licencias;
+    private Map<String, Integer> experiencia;
+    private List<ProblemaVial> problemasViales;
+
+    public Chofer() {
+        licencias = new ArrayList<>();
+        experiencia = new HashMap<>();
+        problemasViales = new ArrayList<>();
+    }
+
+    public Chofer(String identificacion, String nombre) {
+        super(identificacion, nombre);
+        licencias = new ArrayList<>();
+        experiencia = new HashMap<>();
+        problemasViales = new ArrayList<>();
+    }
+
+    public Chofer(String identificacion, String nombre, String contacto) {
+        super(identificacion, nombre, contacto);
+        licencias = new ArrayList<>();
+        experiencia = new HashMap<>();
+        problemasViales = new ArrayList<>();
+    }
+
+    public void addLicencia(Licencia licencia) {
+        licencias.add(licencia);
+    }
+
+    public void addExperiencia(String tipoVehiculo, int anios) {
+        experiencia.put(tipoVehiculo, anios);
+    }
+
+    public void addProblemaVial(ProblemaVial problema) {
+        problemasViales.add(problema);
+    }
+
+    // Getters y setters
+
+
+    public List<Licencia> getLicencias() {
+        return licencias;
+    }
+
+    public void setLicencias(List<Licencia> licencias) {
+        this.licencias = licencias;
+    }
+
+    protected void finalize() {
+        System.out.println("Destruyendo chofer: " + nombre);
+    }
+
+    public List<ProblemaVial> getProblemasViales() {
+        return problemasViales;
+    }
+
+    public void setProblemasViales(List<ProblemaVial> problemasViales) {
+        this.problemasViales = problemasViales;
+    }
+
+    public Map<String, Integer> getExperiencia() {
+        return experiencia;
+    }
+
+    public void setExperiencia(Map<String, Integer> experiencia) {
+        this.experiencia = experiencia;
+    }
+}
+
+class Licencia {
+    private String tipo;
+    private Date fechaEmision;
+    private Date fechaVencimiento;
+
+    // Constructores, getters y setters
+
+    public Licencia(String tipo, Date fechaEmision, Date fechaVencimiento) {
+        this.tipo = tipo;
+        this.fechaEmision = fechaEmision;
+        this.fechaVencimiento = fechaVencimiento;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public Date getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(Date fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
+
+    public Date getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
+    public void setFechaVencimiento(Date fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
+    }
+}
+
+class ProblemaVial {
+    private String numeroParte;
+    private Date fechaHora;
+    private String placaVehiculo;
+    private String descripcion;
+
+    // Constructores, getters y setters
+
+    public ProblemaVial(String numeroParte, Date fechaHora, String placaVehiculo, String descripcion) {
+        this.numeroParte = numeroParte;
+        this.fechaHora = fechaHora;
+        this.placaVehiculo = placaVehiculo;
+        this.descripcion = descripcion;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getPlacaVehiculo() {
+        return placaVehiculo;
+    }
+
+    public void setPlacaVehiculo(String placaVehiculo) {
+        this.placaVehiculo = placaVehiculo;
+    }
+
+    public Date getFechaHora() {
+        return fechaHora;
+    }
+
+    public void setFechaHora(Date fechaHora) {
+        this.fechaHora = fechaHora;
+    }
+
+    public String getNumeroParte() {
+        return numeroParte;
+    }
+
+    public void setNumeroParte(String numeroParte) {
+        this.numeroParte = numeroParte;
+    }
+}
+
+class Vehiculo {
+    private String placa;
+    private String numeroChassis;
+    private String numeroVin;
+    private String marca;
+    private String modelo;
+    private List<String> colores;
+    private String tipoTraccion;
+    private int cantidadPuertas;
+    private Motor motor;
+
+    // Constructores, getters y setters
+
+    public Vehiculo(String placa, String numeroChassis, String numeroVin, String modelo, String tipoTraccion) {
+        this.placa = placa;
+        this.numeroChassis = numeroChassis;
+        this.numeroVin = numeroVin;
+        this.modelo = modelo;
+        this.cantidadPuertas = cantidadPuertas;
+        this.motor = motor;
+        this.tipoTraccion = tipoTraccion;
+        this.colores = colores;
+        this.marca = marca;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public String getNumeroChassis() {
+        return numeroChassis;
+    }
+
+    public void setNumeroChassis(String numeroChassis) {
+        this.numeroChassis = numeroChassis;
+    }
+
+    public String getNumeroVin() {
+        return numeroVin;
+    }
+
+    public void setNumeroVin(String numeroVin) {
+        this.numeroVin = numeroVin;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public int getCantidadPuertas() {
+        return cantidadPuertas;
+    }
+
+    public void setCantidadPuertas(int cantidadPuertas) {
+        this.cantidadPuertas = cantidadPuertas;
+    }
+
+    public Motor getMotor() {
+        return motor;
+    }
+
+    public void setMotor(Motor motor) {
+        this.motor = motor;
+    }
+
+    public String getTipoTraccion() {
+        return tipoTraccion;
+    }
+
+    public void setTipoTraccion(String tipoTraccion) {
+        this.tipoTraccion = tipoTraccion;
+    }
+
+    public List<String> getColores() {
+        return colores;
+    }
+
+    public void setColores(List<String> colores) {
+        this.colores = colores;
+    }
+}
+
+class Motor {
+    private int cilindraje;
+    private String numeroRegistro;
+    private int potencia;
+    private String tipoCombustible;
+    private int cantidadCilindros;
+    private int cantidadValvulas;
+
+    // Constructores, getters y setters
+
+    public Motor(int cilindraje, String numeroRegistro, int potencia, String tipoCombustible, int cantidadCilindros, int cantidadValvulas) {
+        this.cilindraje = cilindraje;
+        this.numeroRegistro = numeroRegistro;
+        this.potencia = potencia;
+        this.tipoCombustible = tipoCombustible;
+        this.cantidadCilindros = cantidadCilindros;
+        this.cantidadValvulas = cantidadValvulas;
+    }
+
+    public int getCilindraje() {
+        return cilindraje;
+    }
+
+    public void setCilindraje(int cilindraje) {
+        this.cilindraje = cilindraje;
+    }
+
+    public String getNumeroRegistro() {
+        return numeroRegistro;
+    }
+
+    public void setNumeroRegistro(String numeroRegistro) {
+        this.numeroRegistro = numeroRegistro;
+    }
+
+    public int getPotencia() {
+        return potencia;
+    }
+
+    public void setPotencia(int potencia) {
+        this.potencia = potencia;
+    }
+
+    public String getTipoCombustible() {
+        return tipoCombustible;
+    }
+
+    public void setTipoCombustible(String tipoCombustible) {
+        this.tipoCombustible = tipoCombustible;
+    }
+
+    public int getCantidadCilindros() {
+        return cantidadCilindros;
+    }
+
+    public void setCantidadCilindros(int cantidadCilindros) {
+        this.cantidadCilindros = cantidadCilindros;
+    }
+
+    public int getCantidadValvulas() {
+        return cantidadValvulas;
+    }
+
+    public void setCantidadValvulas(int cantidadValvulas) {
+        this.cantidadValvulas = cantidadValvulas;
+    }
+}
+
+class Cliente extends Persona {
+    private String direccionFisica;
+
+    // Constructores, getters y setters
+
+    public Cliente(String direccionFisica) {
+        this.direccionFisica = direccionFisica;
+    }
+
+    public Cliente(String identificacion, String nombre, String direccionFisica) {
+        super(identificacion, nombre);
+        this.direccionFisica = direccionFisica;
+    }
+
+    public Cliente(String identificacion, String nombre, String contacto, String direccionFisica) {
+        super(identificacion, nombre, contacto);
+        this.direccionFisica = direccionFisica;
+    }
+
+    public String getDireccionFisica() {
+        return direccionFisica;
+    }
+
+    public void setDireccionFisica(String direccionFisica) {
+        this.direccionFisica = direccionFisica;
+    }
+}
+
+class Servicio {
+    private String numeroServicio;
+    private Date fechaInicial;
+    private Date fechaFinal;
+    private String tipoServicio;
+    private Vehiculo vehiculo;
+    private Chofer chofer;
+    private double costoServicio;
+    private double costoPoliza;
+    private double valorEstimadoMercaderia;
+
+    // Constructores, getters y setters
+
+    public Servicio(String numeroServicio, Date fechaInicial, Date fechaFinal, String tipoServicio) {
+        this.numeroServicio = numeroServicio;
+        this.fechaInicial = fechaInicial;
+        this.fechaFinal = fechaFinal;
+        this.tipoServicio = tipoServicio;
+        this.vehiculo = vehiculo;
+        this.chofer = chofer;
+        this.costoServicio = costoServicio;
+        this.costoPoliza = costoPoliza;
+        this.valorEstimadoMercaderia = valorEstimadoMercaderia;
+    }
+
+    public String getNumeroServicio() {
+        return numeroServicio;
+    }
+
+    public void setNumeroServicio(String numeroServicio) {
+        this.numeroServicio = numeroServicio;
+    }
+
+    public Date getFechaInicial() {
+        return fechaInicial;
+    }
+
+    public void setFechaInicial(Date fechaInicial) {
+        this.fechaInicial = fechaInicial;
+    }
+
+    public Date getFechaFinal() {
+        return fechaFinal;
+    }
+
+    public void setFechaFinal(Date fechaFinal) {
+        this.fechaFinal = fechaFinal;
+    }
+
+    public Vehiculo getVehiculo() {
+        return vehiculo;
+    }
+
+    public void setVehiculo(Vehiculo vehiculo) {
+        this.vehiculo = vehiculo;
+    }
+
+    public String getTipoServicio() {
+        return tipoServicio;
+    }
+
+    public void setTipoServicio(String tipoServicio) {
+        this.tipoServicio = tipoServicio;
+    }
+
+    public Chofer getChofer() {
+        return chofer;
+    }
+
+    public void setChofer(Chofer chofer) {
+        this.chofer = chofer;
+    }
+
+    public double getCostoServicio() {
+        return costoServicio;
+    }
+
+    public void setCostoServicio(double costoServicio) {
+        this.costoServicio = costoServicio;
+    }
+
+    public double getCostoPoliza() {
+        return costoPoliza;
+    }
+
+    public void setCostoPoliza(double costoPoliza) {
+        this.costoPoliza = costoPoliza;
+    }
+
+    public double getValorEstimadoMercaderia() {
+        return valorEstimadoMercaderia;
+    }
+
+    public void setValorEstimadoMercaderia(double valorEstimadoMercaderia) {
+        this.valorEstimadoMercaderia = valorEstimadoMercaderia;
+    }
+
+    protected void finalize() {
+        System.out.println("Destruyendo servicio: " + numeroServicio);
+    }
+}
