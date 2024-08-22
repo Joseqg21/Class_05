@@ -1,0 +1,123 @@
+/*=================================================================================
+Study Center....: Universidad Técnica Nacional
+Campus..........: Pacífico (JRMP)
+College career..: Ingeniería en Tecnologías de Información
+Period..........: 2C-2024
+Course..........: ITI-221 - Programación I
+Document........: Practica 5_Pro6
+Goals...........: Use functions from the external library to generate random data
+                  and print it in a table format.
+Professor.......: Jorge Ruiz (york)
+Student.........: Jose Quesada Gonzalez
+=================================================================================*/
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class EmpresaTransportista {
+    private List<Chofer> choferes;
+    private List<Vehiculo> vehiculos;
+    private List<Cliente> clientes;
+    private List<Servicio> servicios;
+
+    public EmpresaTransportista() {
+        choferes = new ArrayList<>();
+        vehiculos = new ArrayList<>();
+        clientes = new ArrayList<>();
+        servicios = new ArrayList<>();
+    }
+
+    public void precargarDatos() {
+        // Precargar choferes
+        Chofer chofer1 = new Chofer("101", "Juan Pérez", "8888-8888");
+        chofer1.addLicencia(new Licencia("B1", new Date(), new Date()));
+        chofer1.addExperiencia("Sedán", 5);
+        choferes.add(chofer1);
+
+        // Precargar vehículos
+        Vehiculo vehiculo1 = new Vehiculo("ABC123", "CHAS123", "VIN123", "Toyota", "Corolla");
+        vehiculo1.setMotor(new Motor(1800, "MOT123", 140, "Gasolina", 4, 16));
+        vehiculos.add(vehiculo1);
+
+        // Precargar clientes
+        clientes.add(new Cliente("201", "Empresa XYZ", "2222-2222", "San José"));
+
+        // Precargar servicios
+        Servicio servicio1 = new Servicio("SERV001", new Date(), new Date(), "Pasajeros");
+        servicio1.setVehiculo(vehiculo1);
+        servicio1.setChofer(chofer1);
+        servicios.add(servicio1);
+    }
+
+    public Vehiculo consultarVehiculo(String placa) {
+        for (Vehiculo v : vehiculos) {
+            if (v.getPlaca().equals(placa)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    public Chofer consultarChofer(String identificacion) {
+        for (Chofer c : choferes) {
+            if (c.getIdentificacion().equals(identificacion)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public void registrarServicio(Servicio servicio) {
+        servicios.add(servicio);
+    }
+
+    public void mostrarServicio(String numeroServicio) {
+        for (Servicio s : servicios) {
+            if (s.getNumeroServicio().equals(numeroServicio)) {
+                System.out.println("Datos del servicio:");
+                System.out.println(s);
+                System.out.println("Datos del chofer:");
+                System.out.println(s.getChofer());
+                System.out.println("Licencias del chofer:");
+                for (Licencia l : s.getChofer().getLicencias()) {
+                    System.out.println(l);
+                }
+                System.out.println("Datos del vehículo:");
+                System.out.println(s.getVehiculo());
+                return;
+            }
+        }
+        System.out.println("Servicio no encontrado.");
+    }
+
+    public void borrarChofer(String identificacion) {
+        choferes.removeIf(c -> c.getIdentificacion().equals(identificacion));
+        System.gc(); // Llamar al recolector de basura
+    }
+
+    public void borrarServicio(String numeroServicio) {
+        servicios.removeIf(s -> s.getNumeroServicio().equals(numeroServicio));
+        System.gc(); // Llamar al recolector de basura
+    }
+
+    public static void main(String[] args) {
+        EmpresaTransportista empresa = new EmpresaTransportista();
+        empresa.precargarDatos();
+
+        // Ejemplo de uso
+        Vehiculo v = empresa.consultarVehiculo("ABC123");
+        if (v != null) {
+            System.out.println("Vehículo encontrado: " + v);
+        }
+
+        Chofer c = empresa.consultarChofer("101");
+        if (c != null) {
+            System.out.println("Chofer encontrado: " + c);
+        }
+
+        empresa.mostrarServicio("SERV001");
+
+        empresa.borrarChofer("101");
+        empresa.borrarServicio("SERV001");
+    }
+}
