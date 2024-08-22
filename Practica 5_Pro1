@@ -1,0 +1,215 @@
+
+/*=================================================================================
+Study Center....: Universidad Técnica Nacional
+Campus..........: Pacífico (JRMP)
+College career..: Ingeniería en Tecnologías de Información
+Period..........: 2C-2024
+Course..........: ITI-221 - Programación I
+Document........: Practica 5_Pro1
+Goals...........: Use functions from the external library to generate random data
+                  and print it in a table format.
+Professor.......: Jorge Ruiz (york)
+Student.........: Jose Quesada Gonzalez
+=================================================================================*/
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Vector;
+
+public class CafeteriaApp {
+    public static void main(String[] args) {
+        Menu menu = new Menu();
+        Scanner scanner = new Scanner(System.in);
+
+        int numRecetas = 0;
+        while (numRecetas < 2) {
+            // Pedir al usuario que ingrese los datos del producto
+            System.out.println("Ingrese el tipo de producto (1: Postre, 2: Bebida):");
+            int tipoProducto = scanner.nextInt();
+            scanner.nextLine(); // Consumir el salto de línea
+
+            System.out.println("Ingrese el nombre del producto:");
+            String nombreProducto = scanner.nextLine();
+
+            System.out.println("Ingrese el precio del producto:");
+            double precioProducto = scanner.nextDouble();
+            scanner.nextLine(); // Consumir el salto de línea
+
+            ProductoCafe producto;
+            if (tipoProducto == 1) {
+                producto = new PostreCafe(nombreProducto);
+            } else {
+                System.out.println("¿Es una bebida fría o caliente? (1: Fría, 2: Caliente):");
+                int temperaturaBebida = scanner.nextInt();
+                scanner.nextLine(); // Consumir el salto de línea
+
+                System.out.println("¿La bebida contiene alcohol? (1: Sí, 2: No):");
+                int contieneAlcohol = scanner.nextInt();
+                scanner.nextLine(); // Consumir el salto de línea
+
+                if (temperaturaBebida == 1) {
+                    producto = new CafeFrio(nombreProducto, contieneAlcohol == 1);
+                } else {
+                    producto = new CafeCaliente(nombreProducto, contieneAlcohol == 1);
+                }
+            }
+
+            // Agregar precio al producto
+            producto.setPrecio(precioProducto);
+
+            // Pedir ingredientes
+            while (true) {
+                System.out.println("Ingrese el nombre del ingrediente (o 'fin' para terminar):");
+                String nombreIngrediente = scanner.nextLine();
+                if (nombreIngrediente.equalsIgnoreCase("fin")) {
+                    break;
+                }
+
+                System.out.println("Ingrese la cantidad del ingrediente:");
+                String cantidadIngrediente = scanner.nextLine();
+
+                producto.agregarIngrediente(new Ingrediente(nombreIngrediente, cantidadIngrediente));
+            }
+
+            // Agregar el producto al menú
+            menu.agregarProducto(producto);
+            numRecetas++;
+
+            // Mostrar el producto ingresado
+            System.out.println("\nProducto ingresado:");
+            System.out.println("Nombre: " + producto.getNombre());
+            System.out.println("Precio: $" + producto.getPrecio());
+            producto.mostrarReceta();
+        }
+
+        // Mostrar el menú completo
+        System.out.println("\nMenú completo:");
+        menu.mostrarMenu();
+
+        scanner.close();
+    }
+}
+
+abstract class ProductoCafe {
+    protected String nombre;
+    protected List<Ingrediente> receta;
+    protected double precio;
+
+    public ProductoCafe(String nombre) {
+        this.nombre = nombre;
+        this.receta = new ArrayList<>();
+    }
+
+    public void agregarIngrediente(Ingrediente ingrediente) {
+        receta.add(ingrediente);
+    }
+
+    public void mostrarReceta() {
+        System.out.println("Receta de " + nombre + ":");
+        for (Ingrediente ingrediente : receta) {
+            System.out.println("- " + ingrediente.getNombre() + ": " + ingrediente.getCantidad());
+        }
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+}
+
+class CafeCaliente extends ProductoCafe {
+    private boolean conAlcohol;
+
+    public CafeCaliente(String nombre, boolean conAlcohol) {
+        super(nombre);
+        this.conAlcohol = conAlcohol;
+    }
+
+    public void mostrarReceta() {
+        super.mostrarReceta();
+        System.out.println("Tipo: Café Caliente");
+        System.out.println("Con alcohol: " + (conAlcohol ? "Sí" : "No"));
+    }
+}
+
+class CafeFrio extends ProductoCafe {
+    private boolean conAlcohol;
+
+    public CafeFrio(String nombre, boolean conAlcohol) {
+        super(nombre);
+        this.conAlcohol = conAlcohol;
+    }
+
+    public void mostrarReceta() {
+        super.mostrarReceta();
+        System.out.println("Tipo: Café Frío");
+        System.out.println("Con alcohol: " + (conAlcohol ? "Sí" : "No"));
+    }
+}
+
+class PostreCafe extends ProductoCafe {
+    public PostreCafe(String nombre) {
+        super(nombre);
+    }
+
+    public void mostrarReceta() {
+        super.mostrarReceta();
+        System.out.println("Tipo: Postre");
+    }
+}
+
+class Ingrediente {
+    private String nombre;
+    private String cantidad;
+
+    public Ingrediente(String nombre, String cantidad) {
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getCantidad() {
+        return cantidad;
+    }
+}
+
+class Menu {
+    private Vector<ProductoCafe> productos;
+
+    public Menu() {
+        productos = new Vector<>();
+    }
+
+    public void agregarProducto(ProductoCafe producto) {
+        productos.add(producto);
+    }
+
+    public void mostrarMenu() {
+        System.out.println("Menú de la cafetería:");
+        for (int i = 0; i < productos.size(); i++) {
+            System.out.println((i + 1) + ". " + productos.get(i).getNombre() + " - $" + productos.get(i).getPrecio());
+        }
+    }
+
+    public void mostrarReceta(int index) {
+        if (index >= 0 && index < productos.size()) {
+            productos.get(index).mostrarReceta();
+        } else {
+            System.out.println("Índice de producto inválido.");
+        }
+    }
+
+    protected void finalize() {
+        System.out.println("Sacando receta del menú");
+    }
+}
