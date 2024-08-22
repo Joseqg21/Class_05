@@ -1,0 +1,116 @@
+/*=================================================================================
+Study Center....: Universidad Técnica Nacional
+Campus..........: Pacífico (JRMP)
+College career..: Ingeniería en Tecnologías de Información
+Period..........: 2C-2024
+Course..........: ITI-221 - Programación I
+Document........: Practica 5_Pro3
+Goals...........: Use functions from the external library to generate random data
+                  and print it in a table format.
+Professor.......: Jorge Ruiz (york)
+Student.........: Jose Quesada Gonzalez
+=================================================================================*/
+import java.util.*;
+import java.time.LocalDateTime;
+
+class Paciente {
+    String nombre;
+    String apellidos;
+    String telefono;
+    String email;
+    Map<String, PiezaDental> registroDental;
+
+    public Paciente(String nombre, String apellidos, String telefono, String email) {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.telefono = telefono;
+        this.email = email;
+        this.registroDental = new HashMap<>();
+        inicializarRegistroDental();
+    }
+
+    private void inicializarRegistroDental() {
+        String[] piezas = {"Incisivo Central", "Incisivo Lateral", "Canino", "Primer Premolar",
+                "Segundo Premolar", "Primer Molar", "Segundo Molar", "Tercer Molar"};
+        for (String pieza : piezas) {
+            registroDental.put(pieza + " Superior", new PiezaDental());
+            registroDental.put(pieza + " Inferior", new PiezaDental());
+        }
+    }
+}
+
+class PiezaDental {
+    List<Tratamiento> historial;
+
+    public PiezaDental() {
+        this.historial = new ArrayList<>();
+    }
+
+    public void agregarTratamiento(Tratamiento tratamiento) {
+        historial.add(tratamiento);
+    }
+}
+
+class Tratamiento {
+    LocalDateTime fecha;
+    String descripcion;
+    String recomendacion;
+
+    public Tratamiento(String descripcion, String recomendacion) {
+        this.fecha = LocalDateTime.now();
+        this.descripcion = descripcion;
+        this.recomendacion = recomendacion;
+    }
+}
+
+class Cita {
+    Paciente paciente;
+    String dentista;
+    LocalDateTime fechaHora;
+    String estado;
+
+    public Cita(Paciente paciente, String dentista, LocalDateTime fechaHora) {
+        this.paciente = paciente;
+        this.dentista = dentista;
+        this.fechaHora = fechaHora;
+        this.estado = "Pendiente";
+    }
+}
+
+public class ClinicaDental {
+    List<Paciente> pacientes;
+    List<Cita> citas;
+
+    public ClinicaDental() {
+        this.pacientes = new ArrayList<>();
+        this.citas = new ArrayList<>();
+    }
+
+    public void registrarPaciente(String nombre, String apellidos, String telefono, String email) {
+        Paciente nuevoPaciente = new Paciente(nombre, apellidos, telefono, email);
+        pacientes.add(nuevoPaciente);
+    }
+
+    public void agregarTratamiento(Paciente paciente, String pieza, String descripcion, String recomendacion) {
+        Tratamiento nuevoTratamiento = new Tratamiento(descripcion, recomendacion);
+        paciente.registroDental.get(pieza).agregarTratamiento(nuevoTratamiento);
+    }
+
+    public void agendarCita(Paciente paciente, String dentista, LocalDateTime fechaHora) {
+        Cita nuevaCita = new Cita(paciente, dentista, fechaHora);
+        citas.add(nuevaCita);
+    }
+
+    public static void main(String[] args) {
+        ClinicaDental clinica = new ClinicaDental();
+
+        // Ejemplo de uso
+        clinica.registrarPaciente("Juan", "Pérez", "123456789", "juan@email.com");
+        Paciente juan = clinica.pacientes.get(0);
+
+        clinica.agregarTratamiento(juan, "Incisivo Central Superior", "Limpieza", "Cepillado regular");
+        clinica.agendarCita(juan, "Dr. García", LocalDateTime.now().plusDays(7));
+
+        System.out.println("Paciente registrado y cita agendada.");
+    }
+}
