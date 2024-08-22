@@ -1,0 +1,229 @@
+import java.util.*;
+/*=================================================================================
+Study Center....: Universidad Técnica Nacional
+Campus..........: Pacífico (JRMP)
+College career..: Ingeniería en Tecnologías de Información
+Period..........: 2C-2024
+Course..........: ITI-221 - Programación I
+Document........: Practica 5_Pro2
+Goals...........: Use functions from the external library to generate random data
+                  and print it in a table format.
+Professor.......: Jorge Ruiz (york)
+Student.........: Jose Quesada Gonzalez
+=================================================================================*/
+
+// Clase principal para demostrar el funcionamiento
+public class SistemaEvaluacionDocente {
+    public static void main(String[] args) {
+        // Crear preguntas cerradas
+        List<String> opcionesAcuerdo = Arrays.asList("Muy de acuerdo", "De acuerdo", "Poco de acuerdo", "En desacuerdo");
+        Map<String, Integer> valoresAcuerdo = new HashMap<>();
+        valoresAcuerdo.put("Muy de acuerdo", 4);
+        valoresAcuerdo.put("De acuerdo", 3);
+        valoresAcuerdo.put("Poco de acuerdo", 2);
+        valoresAcuerdo.put("En desacuerdo", 1);
+
+        PreguntaCerrada pregunta1 = new PreguntaCerrada(
+                "¿El profesor explica claramente los temas de la clase?",
+                "Aspectos profesionales",
+                opcionesAcuerdo,
+                valoresAcuerdo
+        );
+
+        List<String> opcionesCalidad = Arrays.asList("Excelente", "Muy Bueno", "Bueno", "Regular", "Malo", "Muy malo");
+        Map<String, Integer> valoresCalidad = new HashMap<>();
+        valoresCalidad.put("Excelente", 6);
+        valoresCalidad.put("Muy Bueno", 5);
+        valoresCalidad.put("Bueno", 4);
+        valoresCalidad.put("Regular", 3);
+        valoresCalidad.put("Malo", 2);
+        valoresCalidad.put("Muy malo", 1);
+
+        PreguntaCerrada pregunta2 = new PreguntaCerrada(
+                "La calidad del material didáctico utilizado en clase es:",
+                "Aspectos profesionales",
+                opcionesCalidad,
+                valoresCalidad
+        );
+
+        // Crear pregunta abierta
+        PreguntaAbierta pregunta3 = new PreguntaAbierta(
+                "¿Qué sugerencias tiene para mejorar el desempeño del profesor?",
+                "Aspectos varios"
+        );
+
+        // Crear instrumento de evaluación
+        InstrumentoEvaluacion instrumento = new InstrumentoEvaluacion();
+        instrumento.agregarPregunta(pregunta1);
+        instrumento.agregarPregunta(pregunta2);
+        instrumento.agregarPregunta(pregunta3);
+
+        // Crear evaluación docente
+        EvaluacionDocente evaluacion = new EvaluacionDocente(
+                "Juan Pérez",
+                "Programación",
+                "2024",
+                "I Semestre",
+                instrumento
+        );
+
+        // Permitir al usuario responder las preguntas
+        Scanner scanner = new Scanner(System.in);
+        for (Pregunta pregunta : instrumento.getPreguntas()) {
+            if (pregunta instanceof PreguntaCerrada) {
+                PreguntaCerrada preguntaCerrada = (PreguntaCerrada) pregunta;
+                preguntaCerrada.mostrar();
+                System.out.print("Ingrese el número de la opción elegida: ");
+                int opcionElegida = scanner.nextInt();
+                String respuesta = preguntaCerrada.getOpciones().get(opcionElegida - 1);
+                evaluacion.responderPregunta(preguntaCerrada, respuesta);
+            } else if (pregunta instanceof PreguntaAbierta) {
+                PreguntaAbierta preguntaAbierta = (PreguntaAbierta) pregunta;
+                preguntaAbierta.mostrar();
+                System.out.print("Ingrese su respuesta: ");
+                scanner.nextLine(); // Consumir el salto de línea
+                String respuesta = scanner.nextLine();
+                evaluacion.responderPreguntaAbierta(preguntaAbierta, respuesta);
+            }
+            System.out.println();
+        }
+
+        // Mostrar resultados
+        evaluacion.mostrarResultados();
+
+    }
+}
+
+abstract class Pregunta {
+    protected String enunciado;
+    protected String categoria;
+
+    public Pregunta(String enunciado, String categoria) {
+        this.enunciado = enunciado;
+        this.categoria = categoria;
+    }
+
+    public abstract void mostrar();
+    public abstract int getValorMaximo();
+}
+
+class PreguntaCerrada extends Pregunta {
+    private List<String> opciones;
+    private Map<String, Integer> valores;
+
+    public PreguntaCerrada(String enunciado, String categoria, List<String> opciones, Map<String, Integer> valores) {
+        super(enunciado, categoria);
+        this.opciones = opciones;
+        this.valores = valores;
+    }
+
+    public void mostrar() {
+        System.out.println(enunciado);
+        for (int i = 0; i < opciones.size(); i++) {
+            System.out.println((i + 1) + ". [ ] " + opciones.get(i));
+        }
+    }
+
+    public List<String> getOpciones() {
+        return opciones;
+    }
+
+    public int getValor(String respuesta) {
+        return valores.getOrDefault(respuesta, 0);
+    }
+
+    public int getValorMaximo() {
+        return Collections.max(valores.values());
+    }
+}
+
+class PreguntaAbierta extends Pregunta {
+    public PreguntaAbierta(String enunciado, String categoria) {
+        super(enunciado, categoria);
+    }
+
+    public void mostrar() {
+        System.out.println(enunciado);
+        System.out.println("Respuesta: ________________");
+    }
+
+    public int getValorMaximo() {
+        return 0; // Las preguntas abiertas no tienen un valor numérico
+    }
+}
+
+class InstrumentoEvaluacion {
+    private List<Pregunta> preguntas;
+
+    public InstrumentoEvaluacion() {
+        this.preguntas = new ArrayList<>();
+    }
+
+    public void agregarPregunta(Pregunta pregunta) {
+        preguntas.add(pregunta);
+    }
+
+    public void mostrarInstrumento() {
+        for (Pregunta pregunta : preguntas) {
+            pregunta.mostrar();
+            System.out.println();
+        }
+    }
+
+    public List<Pregunta> getPreguntas() {
+        return preguntas;
+    }
+}
+
+class EvaluacionDocente {
+    private String nombreProfesor;
+    private String nombreCurso;
+    private String anio;
+    private String periodo;
+    private InstrumentoEvaluacion instrumento;
+    private Map<PreguntaCerrada, String> respuestas;
+
+    private Map<PreguntaAbierta, String> respuestasAbiertas;
+
+    public EvaluacionDocente(String nombreProfesor, String nombreCurso, String anio, String periodo, InstrumentoEvaluacion instrumento) {
+        this.nombreProfesor = nombreProfesor;
+        this.nombreCurso = nombreCurso;
+        this.anio = anio;
+        this.periodo = periodo;
+        this.instrumento = instrumento;
+        this.respuestas = new HashMap<>();
+        this.respuestasAbiertas = new HashMap<>();
+    }
+
+    public void responderPreguntaAbierta(PreguntaAbierta pregunta, String respuesta) {
+        respuestasAbiertas.put(pregunta, respuesta);
+    }
+
+    public double calcularRendimiento() {
+        int totalPuntos = 0;
+        int puntosObtenidos = 0;
+        for (Map.Entry<PreguntaCerrada, String> entry : respuestas.entrySet()) {
+            PreguntaCerrada pregunta = entry.getKey();
+            String respuesta = entry.getValue();
+            totalPuntos += pregunta.getValorMaximo();
+            puntosObtenidos += pregunta.getValor(respuesta);
+        }
+        return totalPuntos > 0 ? (double) puntosObtenidos / totalPuntos * 100 : 0;
+    }
+
+    public void mostrarResultados() {
+        System.out.println("Evaluación del profesor: " + nombreProfesor);
+        System.out.println("Curso: " + nombreCurso);
+        System.out.println("Año: " + anio + ", Periodo: " + periodo);
+        System.out.println("Rendimiento: " + String.format("%.2f", calcularRendimiento()) + "%");
+        System.out.println("Respuestas a preguntas abiertas:");
+        for (Map.Entry<PreguntaAbierta, String> entry : respuestasAbiertas.entrySet()) {
+            System.out.println(entry.getKey().enunciado);
+            System.out.println("Respuesta: " + entry.getValue());
+        }
+    }
+
+    public void responderPregunta(PreguntaCerrada preguntaCerrada, String respuesta) {
+    }
+}
+
